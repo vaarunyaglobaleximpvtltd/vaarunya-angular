@@ -1,0 +1,101 @@
+{
+  "hero": {
+    "title": "Global Accessibility Hub",
+    "subtitle": "Connect with Vaarunya across continents. We're here to bridge your business with global opportunities, 24/7."
+  },
+  "serviceStandards": [
+    {
+      "title": "First Response Guarantee",
+      "description": "Every inquiry receives an initial response within our committed timeframe, even if it's just to acknowledge receipt and provide next steps."
+    },
+    {
+      "title": "Escalation Protocol",
+      "description": "Complex issues are automatically escalated to senior specialists within 2 hours to ensure expert resolution."
+    },
+    {
+      "title": "Follow-up Commitment",
+      "description": "We proactively follow up on all inquiries to ensure complete satisfaction and address any additional questions."
+    },
+    {
+      "title": "Quality Assurance",
+      "description": "All communications are monitored for quality, accuracy, and customer satisfaction with continuous improvement."
+    }
+  ],
+  "urgencyLevels": [
+    {
+      "level": "Normal Priority",
+      "time": "Within 24 hours",
+      "description": "Standard business inquiries, quotation requests, and general information"
+    },
+    {
+      "level": "High Priority",
+      "time": "Within 6-8 hours",
+      "description": "Order modifications, shipping updates, and time-sensitive business matters"
+    },
+    {
+      "level": "Urgent Priority",
+      "time": "Within 2-4 hours",
+      "description": "Customs issues, shipment delays, quality concerns, and emergency situations"
+    }
+  ],
+  "faq": [
+    {
+      "category": "Getting Started",
+      "questions": [
+        {
+          "question": "How do I place my first order?",
+          "answer": "Getting started is simple:\n1. Contact us through any channel (phone, email, WhatsApp, or web form)\n2. Share your product requirements and specifications\n3. Receive detailed quotation within 24 hours\n4. Review samples if needed (we can arrange sample shipments)\n5. Confirm order with 30% advance payment\n6. We handle all documentation and shipping\n7. Receive your goods with full tracking support\nOur team guides you through every step of your first international trade experience."
+        },
+        {
+          "question": "Do you provide product samples?",
+          "answer": "Yes! Free samples for products under $50 value. Paid samples for higher-value items — cost deducted from first order. Sample shipping is usually 3-7 days via DHL/FedEx. Prices quoted with samples are valid for 30 days."
+        }
+      ]
+    },
+    {
+      "category": "Payment & Pricing",
+      "questions": [
+        {
+          "question": "What payment methods do you accept?",
+          "answer": "Bank Wire Transfer (T/T), Letter of Credit (L/C) for larger orders, and PayPal for smaller orders and samples. Payment terms are typically 30% advance, 70% before shipment."
+        },
+        {
+          "question": "Do you offer volume discounts?",
+          "answer": "Yes! Bronze Category (5+ imports/year) — basic discounts. Silver Category (10+ imports/year) — higher discounts. Gold Category (15+ imports/year) — premium discounts. Additional benefits include priority scheduling, dedicated representative, and reduced shipping costs."
+        }
+      ]
+    },
+    {
+      "category": "Shipping & Logistics",
+      "questions": [
+        {
+          "question": "What shipping options are available?",
+          "answer": "Sea Freight for large orders, Air Freight for urgent orders, Express Courier (DHL/FedEx) for samples, and Land Transport for neighboring countries. Shipping terms: FOB and CIF available."
+        },
+        {
+          "question": "How do you handle customs and documentation?",
+          "answer": "We handle all export documentation: Commercial Invoice, Packing List, Certificate of Origin, Export License, Phytosanitary Certificate, Quality Certificates, Insurance Documents, and Bill of Lading. 100% accuracy to prevent customs delays."
+        }
+      ]
+    },
+    {
+      "category": "Quality & Compliance",
+      "questions": [
+        {
+          "question": "What quality assurance measures do you have?",
+          "answer": "Pre-production samples, in-process monitoring, pre-shipment inspection by third-party agencies, quality certificates from accredited labs, photo/video documentation, and compliance with ISO, FDA, CE standards. We guarantee quality or replace at no cost."
+        },
+        {
+          "question": "Do you provide certificates and test reports?",
+          "answer": "Yes — Certificate of Analysis (COA), third-party lab reports, Organic/Fair Trade certificates, FDA/FSSAI registration, ISO certification, Phytosanitary certificates, and MSDS for chemicals. All from internationally recognized laboratories."
+        }
+      ]
+    }
+  ],
+  "inquiryTypes": [
+    "New Business Inquiry",
+    "Existing Client Support",
+    "Partnership Opportunities",
+    "General Information"
+  ]
+}

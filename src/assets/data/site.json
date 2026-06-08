@@ -1,0 +1,46 @@
+{
+  "company": {
+    "name": "Vaarunya Global Exim Pvt Ltd",
+    "tagline": "A Promise of Trust and Quality",
+    "description": "Vaarunya Global EXIM Pvt Ltd is a brand-led export house specializing in agriculture, leather, and FMCG commodities including spices, dairy, seafood, processed foods, and raw to finished leather.",
+    "fullDescription": "We source directly from certified MSMEs, SHGs, rural entrepreneurs, and proprietary organic farms ensuring transparent, demand-driven procurement that uplifts grassroots producers. Our commitment to quality is embedded at every stage, backed by in-house inspections, batch-level testing, and strict compliance with international packaging standards.",
+    "secondParagraph": "Driven by an integrated, innovation-led model, Vaarunya seamlessly connects Indian producers with global buyers promoting sustainable trade and consistent excellence across markets. At Vaarunya, we don't just facilitate trade, we build enduring partnerships rooted in trust, transparency, and mutual growth. Our competitive pricing, client-first approach, and dedicated end-to-end support have made us a trusted choice for businesses across continents.",
+    "founderQuote": "Join us as we shape the future of global trade — one successful transaction at a time.",
+    "logo": "assets/images/logo.png",
+    "address": {
+      "line1": "51-6-9, Vijayawada Municipal Corporation",
+      "line2": "Revenue Ward 2A, Machavaram",
+      "city": "Vijayawada",
+      "pincode": "520004",
+      "state": "Andhra Pradesh",
+      "country": "India"
+    },
+    "contact": {
+      "phones": [
+        { "label": "India", "number": "+91 9390908096", "hours": "9:00 AM - 6:00 PM IST" },
+        { "label": "USA", "number": "+1 (647) 221-5353", "hours": "9:00 AM - 5:00 PM EST" },
+        { "label": "Canada", "number": "+1 (647) 221-5353", "hours": "9:00 AM - 6:00 PM CST" }
+      ],
+      "whatsapp": { "number": "+91 9100477554", "availability": "24/7 Available" },
+      "emails": [
+        { "label": "Support Desk", "email": "support@vaarunyaglobalexim.com", "responseTime": "Within 4 hours" },
+        { "label": "Sales Operations", "email": "sales@vaarunyaglobalexim.com", "responseTime": "Within 2 hours" },
+        { "label": "Global Partnerships", "email": "partnerships@vaarunyaglobalexim.com", "responseTime": "Within 24 hours" }
+      ],
+      "mainEmail": "info@vaarunyaglobalexim.com",
+      "mainPhone": "+91 9100477554"
+    },
+    "social": {
+      "linkedin": "https://linkedin.com/company/vaarunyaglobalexim",
+      "twitter": "https://twitter.com/vaarunyaexim",
+      "facebook": "https://facebook.com/vaarunyaglobalexim",
+      "instagram": "https://instagram.com/vaarunyaglobalexim"
+    }
+  },
+  "navigation": [
+    { "label": "Home", "route": "/" },
+    { "label": "About Us", "route": "/about" },
+    { "label": "Products", "route": "/products" },
+    { "label": "Contact", "route": "/contact" }
+  ]
+}
