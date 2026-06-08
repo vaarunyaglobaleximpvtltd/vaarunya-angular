@@ -1,0 +1,94 @@
+{
+  "heroSlides": [
+    {
+      "title": "Global Export Excellence",
+      "subtitle": "Connecting businesses worldwide with premium quality products",
+      "image": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1920&q=80",
+      "cta": { "label": "Explore Products", "route": "/products" }
+    },
+    {
+      "title": "Premium Quality Products",
+      "subtitle": "From aromatic spices to finest textiles, discover our curated collection of export-quality products with international certifications.",
+      "image": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&q=80",
+      "cta": { "label": "View Certifications", "route": "/about" }
+    },
+    {
+      "title": "Transparent Trade Process",
+      "subtitle": "Experience complete transparency from order to delivery with our step-by-step process visualization and real-time tracking.",
+      "image": "https://images.unsplash.com/photo-1494412574643-ff11b0a5eb19?w=1920&q=80",
+      "cta": { "label": "Learn More", "route": "/about" }
+    },
+    {
+      "title": "Competitive & Transparent Pricing",
+      "subtitle": "Benefit from direct procurement and efficient trade practices with zero middlemen.",
+      "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1920&q=80",
+      "cta": { "label": "Get Quote", "route": "/contact" }
+    },
+    {
+      "title": "Innovation in Export",
+      "subtitle": "Our company is built on trust, transparency, and timely delivery. We keep you informed at every stage.",
+      "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80",
+      "cta": { "label": "About Us", "route": "/about" }
+    }
+  ],
+  "whyChoose": [
+    {
+      "icon": "rocket",
+      "title": "Innovation in Export",
+      "description": "We redefine global trade through demand-linked procurement, export-grade quality, real-time tracking, and integrated logistics delivering faster, smarter, and more reliable exports."
+    },
+    {
+      "icon": "star",
+      "title": "Premium Quality Products",
+      "description": "From aromatic spices to seafood, rice, pulses, fruits, and premium leather — explore our curated range of export-quality products with international certifications."
+    },
+    {
+      "icon": "search",
+      "title": "Transparent Sourcing",
+      "description": "Direct sourcing from certified MSMEs, SHGs, and organic farms ensures authenticity, traceability, and dependable supply consistency."
+    },
+    {
+      "icon": "dollar",
+      "title": "Competitive & Transparent Pricing",
+      "description": "From source to shipment, benefit from transparent, competitive pricing, powered by direct procurement and efficient trade practices with zero middlemen."
+    }
+  ],
+  "orderProcess": [
+    {
+      "step": 1,
+      "title": "Receiving Customer Order",
+      "description": "We carefully review and analyze your product requirements, specifications, and delivery expectations."
+    },
+    {
+      "step": 2,
+      "title": "Quotation",
+      "description": "Detailed quotation with competitive pricing, terms, and delivery timeline is prepared and shared."
+    },
+    {
+      "step": 3,
+      "title": "Order Confirmation & Contract Signing",
+      "description": "Upon agreement, we formalize the partnership with comprehensive contracts and order confirmation."
+    },
+    {
+      "step": 4,
+      "title": "Purchasing & Packaging Inspection",
+      "description": "Quality sourcing from trusted suppliers followed by rigorous packaging and quality inspection."
+    },
+    {
+      "step": 5,
+      "title": "Shipping & Customs Clearance",
+      "description": "Professional handling of shipping logistics and customs documentation for smooth transit."
+    },
+    {
+      "step": 6,
+      "title": "Final Delivery to Customer",
+      "description": "Timely delivery to your destination with complete tracking and delivery confirmation."
+    }
+  ],
+  "stats": [
+    { "value": "15+", "label": "Countries Served" },
+    { "value": "200+", "label": "Products Exported" },
+    { "value": "98%", "label": "Client Satisfaction" },
+    { "value": "500+", "label": "Successful Shipments" }
+  ]
+}
