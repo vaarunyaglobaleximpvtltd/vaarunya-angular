@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { DataService } from '../../services/data.service';
@@ -187,7 +187,28 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
               <article class="product-card" appReveal="fadeUp" [revealDelay]="i * 60"
                        itemscope itemtype="https://schema.org/Product">
                 <div class="product-image">
-                  <img [src]="product.image" [alt]="product.name + ' export quality'" loading="lazy" itemprop="image" />
+                  @if (product.images && product.images.length > 1) {
+                    <div class="product-carousel">
+                      <div class="carousel-track" [style.transform]="'translateX(-' + (carouselIndices()[product.name] || 0) * 100 + '%)'">
+                        @for (img of product.images; track img.url; let imgIdx = $index) {
+                          <img
+                            [src]="img.url"
+                            [alt]="product.name + ' image ' + (imgIdx + 1)"
+                            loading="lazy"
+                            class="carousel-slide"
+                            [attr.itemprop]="imgIdx === 0 ? 'image' : null"
+                          />
+                        }
+                      </div>
+                      <div class="carousel-dots">
+                        @for (img of product.images; track img.url; let dotIdx = $index) {
+                          <span class="carousel-dot" [class.active]="dotIdx === (carouselIndices()[product.name] || 0)"></span>
+                        }
+                      </div>
+                    </div>
+                  } @else {
+                    <img [src]="product.image" [alt]="product.name + ' export quality'" loading="lazy" itemprop="image" />
+                  }
                   <div class="product-badges">
                     @if (product.hsCode) {
                       <span class="badge badge-hs">HS {{ product.hsCode }}</span>
@@ -283,7 +304,27 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
               @for (result of searchResults(); track result.product.name + result.categoryId; let i = $index) {
                 <article class="product-card" appReveal="fadeUp" [revealDelay]="i * 50">
                   <div class="product-image">
-                    <img [src]="result.product.image" [alt]="result.product.name" loading="lazy" />
+                    @if (result.product.images && result.product.images.length > 1) {
+                      <div class="product-carousel">
+                        <div class="carousel-track" [style.transform]="'translateX(-' + (carouselIndices()[result.product.name] || 0) * 100 + '%)'">
+                          @for (img of result.product.images; track img.url; let imgIdx = $index) {
+                            <img
+                              [src]="img.url"
+                              [alt]="result.product.name + ' image ' + (imgIdx + 1)"
+                              loading="lazy"
+                              class="carousel-slide"
+                            />
+                          }
+                        </div>
+                        <div class="carousel-dots">
+                          @for (img of result.product.images; track img.url; let dotIdx = $index) {
+                            <span class="carousel-dot" [class.active]="dotIdx === (carouselIndices()[result.product.name] || 0)"></span>
+                          }
+                        </div>
+                      </div>
+                    } @else {
+                      <img [src]="result.product.image" [alt]="result.product.name" loading="lazy" />
+                    }
                     <div class="product-badges">
                       <span class="badge badge-cat">{{ result.categoryName }}</span>
                     </div>
@@ -664,8 +705,41 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
     .product-card:hover .product-image img { transform: scale(1.06); }
 
     .product-image { position: relative; height: 200px; overflow: hidden; }
-    .product-image img {
+    .product-image > img {
       width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;
+    }
+
+    /* ========== PRODUCT CAROUSEL ========== */
+    .product-carousel {
+      position: relative; width: 100%; height: 100%; overflow: hidden;
+    }
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .product-card:hover .carousel-slide { transform: scale(1.06); }
+    .carousel-dots {
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px; z-index: 5;
+    }
+    .carousel-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .carousel-dot.active {
+      background: #c8a951; transform: scale(1.3);
+      box-shadow: 0 0 6px rgba(200,169,81,0.6);
     }
     .product-badges {
       position: absolute; top: 0.75rem; left: 0.75rem; display: flex; gap: 0.4rem; flex-wrap: wrap;
@@ -867,6 +941,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
   activeSubcategory = signal<string | null>(null);
   viewMode = signal<'card' | 'table'>('card');
 
+  // Carousel state — use a signal so Angular detects changes from setInterval
+  carouselIndices = signal<Record<string, number>>({});
+  private carouselIntervals: ReturnType<typeof setInterval>[] = [];
+
   certifications = ['APEDA', 'FSSAI', 'ISO 22000', 'HALAL', 'BRC', 'Organic India', 'HACCP', 'GMP', 'EIA Approved'];
 
   totalProducts = computed(() => {
@@ -909,13 +987,30 @@ export class ProductsComponent implements OnInit, OnDestroy {
     return results;
   });
 
+  activeDisplayProducts = computed(() => {
+    if (this.searchTerm()) {
+      return this.searchResults().map(r => r.product);
+    }
+    return this.currentProducts();
+  });
+
   private jsonLdScript: HTMLScriptElement | null = null;
 
   constructor(
     private data: DataService,
     private seo: SeoService,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    // Reactively start/stop carousels when active display products change
+    effect(() => {
+      const products = this.activeDisplayProducts();
+      if (products.length > 0) {
+        this.startCarousels(products);
+      } else {
+        this.clearCarouselIntervals();
+      }
+    });
+  }
 
   ngOnInit() {
     this.seo.updateSeo({
@@ -943,10 +1038,44 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.clearCarouselIntervals();
     if (this.jsonLdScript) {
       this.jsonLdScript.remove();
       this.jsonLdScript = null;
     }
+  }
+
+  // ---- Carousel helpers ----
+  getActiveImageIndex(productName: string): number {
+    return this.carouselIndices()[productName] || 0;
+  }
+
+  startCarousels(products: any[]) {
+    this.clearCarouselIntervals();
+    const initial: Record<string, number> = {};
+
+    for (const product of products) {
+      if (product.images && product.images.length > 1) {
+        initial[product.name] = 0;
+        const interval = setInterval(() => {
+          this.carouselIndices.update(indices => {
+            const current = indices[product.name] || 0;
+            const next = (current + 1) % product.images.length;
+            return { ...indices, [product.name]: next };
+          });
+        }, 3000);
+        this.carouselIntervals.push(interval);
+      }
+    }
+
+    this.carouselIndices.set(initial);
+  }
+
+  private clearCarouselIntervals() {
+    for (const interval of this.carouselIntervals) {
+      clearInterval(interval);
+    }
+    this.carouselIntervals = [];
   }
 
   getCategoryName(id: string): string {

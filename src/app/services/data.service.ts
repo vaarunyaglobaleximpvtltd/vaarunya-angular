@@ -66,12 +66,22 @@ export class DataService {
         // Map products
         const productsMapped = products.map((p: any) => {
           const pImgs = imagesMap.get(p.id) || [];
-          const primaryImg = pImgs.find((img: any) => img.is_primary) || pImgs[0];
+          // Sort so primary image comes first
+          const sortedImgs = [...pImgs].sort((a: any, b: any) => {
+            if (a.is_primary && !b.is_primary) return -1;
+            if (!a.is_primary && b.is_primary) return 1;
+            return (a.sort_order || 0) - (b.sort_order || 0);
+          });
+          const primaryImg = sortedImgs[0];
           const imageUrl = primaryImg ? primaryImg.image_url : 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80';
 
           return {
             name: p.name,
             image: imageUrl,
+            images: sortedImgs.map((img: any) => ({
+              url: img.image_url,
+              isPrimary: !!img.is_primary
+            })),
             origin: p.origin || 'India',
             grade: p.grade || 'Export Quality',
             packaging: p.packaging || 'Custom Packing',
