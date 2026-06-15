@@ -11,7 +11,7 @@ import { DataService } from '../../services/data.service';
     <header [class.scrolled]="isScrolled()" [class.menu-open]="menuOpen()">
       <div class="container">
         <a routerLink="/" class="logo">
-          <img src="assets/images/logo.svg" alt="Vaarunya Global Exim" class="logo-img" />
+          <!-- <img src="assets/images/logo.svg" alt="Vaarunya Global Exim" class="logo-img" /> -->
           <div class="logo-text">
             <span class="brand">VAARUNYA</span>
             <span class="sub">GLOBAL EXIM</span>

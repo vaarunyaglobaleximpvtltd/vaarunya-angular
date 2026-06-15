@@ -33,7 +33,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
-            <strong>{{ totalProducts() }}</strong>
+            <strong>150+</strong>
             <span>Products</span>
           </div>
           <div class="hero-stat-divider"></div>

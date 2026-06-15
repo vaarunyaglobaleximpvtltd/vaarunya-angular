@@ -1266,18 +1266,6 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       margin: 0 auto;
       position: relative;
       padding-left: 40px;
-
-      /* Vertical line */
-      &::before {
-        content: '';
-        position: absolute;
-        left: 19px;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        border-radius: 3px;
-        background: linear-gradient(to bottom, #c8a951 0%, rgba(200,169,81,0.12) 100%);
-      }
     }
 
     .order-step {
@@ -1287,7 +1275,23 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       margin-bottom: 2rem;
       position: relative;
 
-      &:last-child { margin-bottom: 0; }
+      /* Vertical line between steps */
+      &::before {
+        content: '';
+        position: absolute;
+        left: -21px; /* aligned with center of marker */
+        top: 20px; /* start at center of current marker */
+        bottom: -2rem; /* end at center of next marker */
+        width: 3px;
+        background: #c8a951;
+        z-index: 0;
+        opacity: 0.85;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+        &::before { display: none; } /* End line exactly at step 6 marker */
+      }
     }
 
     .order-step__marker {
@@ -1357,7 +1361,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       display: grid;
       grid-template-columns: 1fr 60px 1fr;
       gap: 0;
-      align-items: center;
+      align-items: start;
       margin-bottom: 0;
     }
 
@@ -1387,8 +1391,8 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
     }
 
     /* Hide line above first step and below last step */
-    .process-step:first-child .process-step__center::before { top: 50%; }
-    .process-step:last-child .process-step__center::before { bottom: 50%; }
+    .process-step:first-child .process-step__center::before { top: 58px; }
+    .process-step:last-child .process-step__center::before { bottom: calc(100% - 58px); }
 
     .process-step__number {
       position: relative;
@@ -1401,7 +1405,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 24px rgba(200,169,81,0.4);
-      margin: auto 0;
+      margin: 2rem 0 auto;
 
       span {
         font-family: 'Playfair Display', serif;
