@@ -933,29 +933,31 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       .category-hero-bar { flex-direction: column; text-align: center; }
       .cat-hero-thumb { width: 60px; height: 60px; }
       .certs-bar { flex-direction: column; }
+    }
 
-      /* Touch-swipe scroll-snap for mobile carousels */
+    /* Touch-swipe scroll-snap for touch-only/no-hover devices (like iPad, mobile) */
+    @media (hover: none), (pointer: coarse) {
       .product-carousel {
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        scroll-behavior: smooth !important;
       }
-      /* Hide scrollbar in mobile carousel */
+      /* Hide scrollbar in touch carousel */
       .product-carousel::-webkit-scrollbar {
-        display: none;
+        display: none !important;
       }
       .product-carousel {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
+        -ms-overflow-style: none !important;  /* IE and Edge */
+        scrollbar-width: none !important;  /* Firefox */
       }
       .carousel-track {
-        transform: none !important; /* Disable JS translation scroll on mobile */
+        transform: none !important; /* Disable JS translation scroll on touch devices */
       }
       .carousel-slide {
-        scroll-snap-align: start;
-        flex: 0 0 100%;
-        width: 100%;
+        scroll-snap-align: start !important;
+        flex: 0 0 100% !important;
+        width: 100% !important;
       }
     }
   `]
@@ -1105,6 +1107,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   onCardMouseEnter(productName: string, images: any[]) {
+    // Disable hover slide cycles on touch-only devices
+    if (window.matchMedia('(hover: none)').matches) return;
+
     if (images && images.length > 1) {
       this.clearProductInterval(productName);
       
@@ -1121,6 +1126,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   onCardMouseLeave(productName: string) {
+    // Disable hover cycle on touch-only devices
+    if (window.matchMedia('(hover: none)').matches) return;
+
     this.clearProductInterval(productName);
     this.carouselIndices.update(indices => ({
       ...indices,
@@ -1129,7 +1137,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   onCarouselScroll(event: Event, productName: string, totalImages: number) {
-    if (window.innerWidth > 768) return;
+    // Only calculate active slide index from scrolling on touch devices
+    if (!window.matchMedia('(hover: none)').matches) return;
 
     const element = event.target as HTMLElement;
     const width = element.clientWidth;
