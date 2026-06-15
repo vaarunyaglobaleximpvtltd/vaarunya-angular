@@ -185,10 +185,12 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
           <div class="products-grid">
             @for (product of currentProducts(); track product.name; let i = $index) {
               <article class="product-card" appReveal="fadeUp" [revealDelay]="i * 60"
-                       itemscope itemtype="https://schema.org/Product">
+                       (mouseenter)="onCardMouseEnter(product.name, product.images)"
+                       (mouseleave)="onCardMouseLeave(product.name)"
+                       itemprop="itemListElement" itemscope itemtype="https://schema.org/Product">
                 <div class="product-image">
                   @if (product.images && product.images.length > 1) {
-                    <div class="product-carousel">
+                    <div class="product-carousel" (scroll)="onCarouselScroll($event, product.name, product.images.length)">
                       <div class="carousel-track" [style.transform]="'translateX(-' + (carouselIndices()[product.name] || 0) * 100 + '%)'">
                         @for (img of product.images; track img.url; let imgIdx = $index) {
                           <img
@@ -302,10 +304,12 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
           @if (searchResults().length > 0) {
             <div class="products-grid">
               @for (result of searchResults(); track result.product.name + result.categoryId; let i = $index) {
-                <article class="product-card" appReveal="fadeUp" [revealDelay]="i * 50">
+                <article class="product-card" appReveal="fadeUp" [revealDelay]="i * 50"
+                         (mouseenter)="onCardMouseEnter(result.product.name, result.product.images)"
+                         (mouseleave)="onCardMouseLeave(result.product.name)">
                   <div class="product-image">
                     @if (result.product.images && result.product.images.length > 1) {
-                      <div class="product-carousel">
+                      <div class="product-carousel" (scroll)="onCarouselScroll($event, result.product.name, result.product.images.length)">
                         <div class="carousel-track" [style.transform]="'translateX(-' + (carouselIndices()[result.product.name] || 0) * 100 + '%)'">
                           @for (img of result.product.images; track img.url; let imgIdx = $index) {
                             <img
@@ -929,6 +933,30 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       .category-hero-bar { flex-direction: column; text-align: center; }
       .cat-hero-thumb { width: 60px; height: 60px; }
       .certs-bar { flex-direction: column; }
+
+      /* Touch-swipe scroll-snap for mobile carousels */
+      .product-carousel {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+      /* Hide scrollbar in mobile carousel */
+      .product-carousel::-webkit-scrollbar {
+        display: none;
+      }
+      .product-carousel {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+      .carousel-track {
+        transform: none !important; /* Disable JS translation scroll on mobile */
+      }
+      .carousel-slide {
+        scroll-snap-align: start;
+        flex: 0 0 100%;
+        width: 100%;
+      }
     }
   `]
 })
@@ -941,9 +969,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
   activeSubcategory = signal<string | null>(null);
   viewMode = signal<'card' | 'table'>('card');
 
-  // Carousel state — use a signal so Angular detects changes from setInterval
+  // Carousel state
   carouselIndices = signal<Record<string, number>>({});
-  private carouselIntervals: ReturnType<typeof setInterval>[] = [];
+  private productIntervals = new Map<string, any>();
 
   certifications = ['APEDA', 'FSSAI', 'ISO 22000', 'HALAL', 'BRC', 'Organic India', 'HACCP', 'GMP', 'EIA Approved'];
 
@@ -1002,16 +1030,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    // Reactively start/stop carousels when active display products change
-    effect(() => {
-      const products = this.activeDisplayProducts();
-      if (products.length > 0) {
-        this.startCarousels(products);
-      } else {
-        this.clearCarouselIntervals();
-      }
-    });
-
     // Reactively update SEO when categories or routing state changes
     effect(() => {
       const cats = this.categories();
@@ -1074,7 +1092,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.clearCarouselIntervals();
+    this.clearAllIntervals();
     if (this.jsonLdScript) {
       this.jsonLdScript.remove();
       this.jsonLdScript = null;
@@ -1086,32 +1104,60 @@ export class ProductsComponent implements OnInit, OnDestroy {
     return this.carouselIndices()[productName] || 0;
   }
 
-  startCarousels(products: any[]) {
-    this.clearCarouselIntervals();
-    const initial: Record<string, number> = {};
-
-    for (const product of products) {
-      if (product.images && product.images.length > 1) {
-        initial[product.name] = 0;
-        const interval = setInterval(() => {
-          this.carouselIndices.update(indices => {
-            const current = indices[product.name] || 0;
-            const next = (current + 1) % product.images.length;
-            return { ...indices, [product.name]: next };
-          });
-        }, 3000);
-        this.carouselIntervals.push(interval);
-      }
+  onCardMouseEnter(productName: string, images: any[]) {
+    if (images && images.length > 1) {
+      this.clearProductInterval(productName);
+      
+      const interval = setInterval(() => {
+        this.carouselIndices.update(indices => {
+          const current = indices[productName] || 0;
+          const next = (current + 1) % images.length;
+          return { ...indices, [productName]: next };
+        });
+      }, 2000);
+      
+      this.productIntervals.set(productName, interval);
     }
-
-    this.carouselIndices.set(initial);
   }
 
-  private clearCarouselIntervals() {
-    for (const interval of this.carouselIntervals) {
+  onCardMouseLeave(productName: string) {
+    this.clearProductInterval(productName);
+    this.carouselIndices.update(indices => ({
+      ...indices,
+      [productName]: 0
+    }));
+  }
+
+  onCarouselScroll(event: Event, productName: string, totalImages: number) {
+    if (window.innerWidth > 768) return;
+
+    const element = event.target as HTMLElement;
+    const width = element.clientWidth;
+    if (width === 0) return;
+    
+    const scrollPosition = element.scrollLeft;
+    const index = Math.round(scrollPosition / width);
+    if (index >= 0 && index < totalImages) {
+      this.carouselIndices.update(indices => {
+        if (indices[productName] === index) return indices;
+        return { ...indices, [productName]: index };
+      });
+    }
+  }
+
+  private clearProductInterval(productName: string) {
+    const interval = this.productIntervals.get(productName);
+    if (interval) {
+      clearInterval(interval);
+      this.productIntervals.delete(productName);
+    }
+  }
+
+  private clearAllIntervals() {
+    for (const [_, interval] of this.productIntervals) {
       clearInterval(interval);
     }
-    this.carouselIntervals = [];
+    this.productIntervals.clear();
   }
 
   getCategoryName(id: string): string {
