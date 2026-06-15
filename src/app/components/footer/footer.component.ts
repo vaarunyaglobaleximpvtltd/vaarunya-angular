@@ -358,6 +358,12 @@ import { DataService } from '../../services/data.service';
         gap: 1rem;
         text-align: center;
       }
+
+      .legal-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
     }
   `]
 })
