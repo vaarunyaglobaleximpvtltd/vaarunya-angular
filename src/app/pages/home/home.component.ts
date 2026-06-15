@@ -13,7 +13,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
   imports: [CommonModule, RouterModule, RevealDirective, CountUpDirective, IllustrationComponent],
   template: `
     <!-- Hero Slider -->
-    <section class="hero">
+    <section class="hero" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
       @if (slides(); as sl) {
         @for (slide of sl; track slide.title; let i = $index) {
           <div class="hero-slide" [class.active]="i === currentSlide()">
@@ -149,7 +149,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
         <div class="products-grid">
           @for (cat of categories(); track cat.id; let i = $index) {
             <div class="product-card" appReveal="fadeUp" [revealDelay]="i * 100">
-              <a [routerLink]="['/products']" [queryParams]="{category: cat.id}" class="product-card-link">
+              <a [routerLink]="['/products', cat.id]" class="product-card-link">
                 <div class="product-image">
                   <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
                   <div class="product-overlay">
@@ -167,7 +167,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
               <!-- Subcategories -->
               <div class="subcategory-list">
                 @for (sub of cat.subcategories; track sub.id) {
-                  <a [routerLink]="['/products']" [queryParams]="{category: cat.id, sub: sub.id}" class="subcat-link">
+                  <a [routerLink]="['/products', cat.id, sub.id]" class="subcat-link">
                     <span class="subcat-name">{{ sub.name }}</span>
                     <span class="subcat-count">{{ sub.products.length }}</span>
                   </a>
@@ -1266,18 +1266,6 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       margin: 0 auto;
       position: relative;
       padding-left: 40px;
-
-      /* Vertical line */
-      &::before {
-        content: '';
-        position: absolute;
-        left: 19px;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        border-radius: 3px;
-        background: linear-gradient(to bottom, #c8a951 0%, rgba(200,169,81,0.12) 100%);
-      }
     }
 
     .order-step {
@@ -1287,7 +1275,23 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       margin-bottom: 2rem;
       position: relative;
 
-      &:last-child { margin-bottom: 0; }
+      /* Vertical line between steps */
+      &::before {
+        content: '';
+        position: absolute;
+        left: -21px; /* aligned with center of marker */
+        top: 20px; /* start at center of current marker */
+        bottom: -2rem; /* end at center of next marker */
+        width: 3px;
+        background: #c8a951;
+        z-index: 0;
+        opacity: 0.85;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+        &::before { display: none; } /* End line exactly at step 6 marker */
+      }
     }
 
     .order-step__marker {
@@ -1357,7 +1361,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       display: grid;
       grid-template-columns: 1fr 60px 1fr;
       gap: 0;
-      align-items: center;
+      align-items: start;
       margin-bottom: 0;
     }
 
@@ -1387,8 +1391,8 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
     }
 
     /* Hide line above first step and below last step */
-    .process-step:first-child .process-step__center::before { top: 50%; }
-    .process-step:last-child .process-step__center::before { bottom: 50%; }
+    .process-step:first-child .process-step__center::before { top: 58px; }
+    .process-step:last-child .process-step__center::before { bottom: calc(100% - 58px); }
 
     .process-step__number {
       position: relative;
@@ -1401,7 +1405,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 24px rgba(200,169,81,0.4);
-      margin: auto 0;
+      margin: 2rem 0 auto;
 
       span {
         font-family: 'Playfair Display', serif;
@@ -1968,14 +1972,15 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       .process-step__number {
         width: 38px;
         height: 38px;
+        margin: 1.5rem 0 auto; /* Align top with content padding on mobile */
         span { font-size: 0.95rem; }
       }
       .process-step__illus { padding: 1.25rem; }
       .process-step__content h3 { font-size: 1.15rem; }
 
-      /* Clip lines at first/last */
-      .process-step:first-child .process-step__center::before { top: 19px; }
-      .process-step:last-child .process-step__center::before { bottom: calc(100% - 19px); }
+      /* Clip lines at first/last based on top margin (1.5rem = 24px) + circle center (19px) = 43px */
+      .process-step:first-child .process-step__center::before { top: 43px; }
+      .process-step:last-child .process-step__center::before { bottom: calc(100% - 43px); }
     }
   `]
 })
@@ -2036,6 +2041,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.slideInterval = setInterval(() => {
       this.nextSlide();
     }, 5000);
+  }
+
+  private touchStartX = 0;
+
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.changedTouches[0].clientX;
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    const touchEndX = event.changedTouches[0].clientX;
+    const diff = this.touchStartX - touchEndX;
+
+    // Swipe left (next slide)
+    if (diff > 50) {
+      this.nextSlide();
+      this.resetInterval();
+    }
+    // Swipe right (prev slide)
+    else if (diff < -50) {
+      this.prevSlide();
+      this.resetInterval();
+    }
   }
 
   resetInterval() {

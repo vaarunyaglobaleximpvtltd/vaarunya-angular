@@ -11,7 +11,7 @@ import { DataService } from '../../services/data.service';
     <header [class.scrolled]="isScrolled()" [class.menu-open]="menuOpen()">
       <div class="container">
         <a routerLink="/" class="logo">
-          <img src="assets/images/logo.svg" alt="Vaarunya Global Exim" class="logo-img" />
+          <!-- <img src="assets/images/logo.svg" alt="Vaarunya Global Exim" class="logo-img" /> -->
           <div class="logo-text">
             <span class="brand">VAARUNYA</span>
             <span class="sub">GLOBAL EXIM</span>
@@ -182,7 +182,7 @@ import { DataService } from '../../services/data.service';
       nav {
         position: fixed;
         top: 0;
-        right: -100%;
+        right: 0;
         width: 75%;
         max-width: 320px;
         height: 100vh;
@@ -191,9 +191,14 @@ import { DataService } from '../../services/data.service';
         padding: 6rem 2rem 2rem;
         gap: 1.5rem;
         box-shadow: -5px 0 30px rgba(0,0,0,0.1);
-        transition: right 0.3s ease;
+        transform: translateX(100%);
+        transition: transform 0.3s ease, visibility 0.3s ease;
+        visibility: hidden;
 
-        &.active { right: 0; }
+        &.active {
+          transform: translateX(0);
+          visibility: visible;
+        }
 
         a {
           color: #1a1a2e !important;
