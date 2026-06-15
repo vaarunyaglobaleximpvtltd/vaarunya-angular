@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { DataService } from '../../services/data.service';
 import { SeoService } from '../../services/seo.service';
 import { RevealDirective } from '../../directives/reveal.directive';
@@ -999,7 +999,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   constructor(
     private data: DataService,
     private seo: SeoService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     // Reactively start/stop carousels when active display products change
     effect(() => {
@@ -1009,6 +1010,42 @@ export class ProductsComponent implements OnInit, OnDestroy {
       } else {
         this.clearCarouselIntervals();
       }
+    });
+
+    // Reactively update SEO when categories or routing state changes
+    effect(() => {
+      const cats = this.categories();
+      const catId = this.activeCategory();
+      const subId = this.activeSubcategory();
+      if (cats.length === 0) return; // Wait for data to load
+
+      let title = 'Export Products: Spices, Basmati Rice, Dry Fruits, Coffee, Tea & More | Vaarunya Global Exim';
+      let description = 'Buy directly from India: black pepper, cardamom, cloves, cinnamon, cumin seeds, turmeric powder, red chilli, coriander, basmati rice, chickpeas, sesame seeds, Alphonso mangoes, pomegranates, Assam tea, Darjeeling tea, Arabica coffee, seafood, buffalo meat & leather. APEDA & FSSAI certified. MOQ from 500 kg. Request free quote.';
+      let canonicalPath = '/products';
+
+      if (catId) {
+        const cat = cats.find(c => c.id === catId);
+        if (cat) {
+          if (subId) {
+            const sub = cat.subcategories.find((s: any) => s.id === subId);
+            if (sub) {
+              title = `${sub.name} Exporter from India - ${cat.name} | Vaarunya Global Exim`;
+              description = `Premium export quality ${sub.name} (${cat.name}) from India. Sourced directly from certified farms with complete quality assurance and export packaging. Request free quote.`;
+              canonicalPath = `/products/${catId}/${subId}`;
+            }
+          } else {
+            title = `Export Quality ${cat.name} - Buy Directly from India | Vaarunya Global Exim`;
+            description = `Sourcing premium ${cat.name} from traditional growing regions across India. ${cat.description} APEDA and FSSAI certified quality. Request free quote.`;
+            canonicalPath = `/products/${catId}`;
+          }
+        }
+      }
+
+      this.seo.updateSeo({
+        title,
+        description,
+        canonicalPath
+      });
     });
   }
 
@@ -1025,15 +1062,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
       this.categories.set(d.categories);
       this.filteredCategories.set(d.categories);
       this.injectJsonLd(d.categories);
+    });
 
-      // Handle query params for deep linking from home page
-      const params = this.route.snapshot.queryParams;
-      if (params['category']) {
-        this.activeCategory.set(params['category']);
-        if (params['sub']) {
-          this.activeSubcategory.set(params['sub']);
-        }
-      }
+    // Subscribe to route parameter changes
+    this.route.paramMap.subscribe(params => {
+      const categoryId = params.get('category');
+      const subcategoryId = params.get('subcategory');
+      this.activeCategory.set(categoryId);
+      this.activeSubcategory.set(subcategoryId);
     });
   }
 
@@ -1092,20 +1128,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   goToCategories() {
-    this.activeCategory.set(null);
-    this.activeSubcategory.set(null);
+    this.router.navigate(['/products']);
     this.clearSearch();
   }
 
   goToCategory(id: string) {
-    this.activeCategory.set(id);
-    this.activeSubcategory.set(null);
+    this.router.navigate(['/products', id]);
     this.clearSearch();
   }
 
   goToSubcategory(catId: string, subId: string) {
-    this.activeCategory.set(catId);
-    this.activeSubcategory.set(subId);
+    this.router.navigate(['/products', catId, subId]);
     this.clearSearch();
   }
 

@@ -149,7 +149,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
         <div class="products-grid">
           @for (cat of categories(); track cat.id; let i = $index) {
             <div class="product-card" appReveal="fadeUp" [revealDelay]="i * 100">
-              <a [routerLink]="['/products']" [queryParams]="{category: cat.id}" class="product-card-link">
+              <a [routerLink]="['/products', cat.id]" class="product-card-link">
                 <div class="product-image">
                   <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
                   <div class="product-overlay">
@@ -167,7 +167,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
               <!-- Subcategories -->
               <div class="subcategory-list">
                 @for (sub of cat.subcategories; track sub.id) {
-                  <a [routerLink]="['/products']" [queryParams]="{category: cat.id, sub: sub.id}" class="subcat-link">
+                  <a [routerLink]="['/products', cat.id, sub.id]" class="subcat-link">
                     <span class="subcat-name">{{ sub.name }}</span>
                     <span class="subcat-count">{{ sub.products.length }}</span>
                   </a>
