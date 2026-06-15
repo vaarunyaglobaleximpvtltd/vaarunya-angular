@@ -13,7 +13,7 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
   imports: [CommonModule, RouterModule, RevealDirective, CountUpDirective, IllustrationComponent],
   template: `
     <!-- Hero Slider -->
-    <section class="hero">
+    <section class="hero" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
       @if (slides(); as sl) {
         @for (slide of sl; track slide.title; let i = $index) {
           <div class="hero-slide" [class.active]="i === currentSlide()">
@@ -1972,14 +1972,15 @@ import { IllustrationComponent } from '../../components/illustrations/illustrati
       .process-step__number {
         width: 38px;
         height: 38px;
+        margin: 1.5rem 0 auto; /* Align top with content padding on mobile */
         span { font-size: 0.95rem; }
       }
       .process-step__illus { padding: 1.25rem; }
       .process-step__content h3 { font-size: 1.15rem; }
 
-      /* Clip lines at first/last */
-      .process-step:first-child .process-step__center::before { top: 19px; }
-      .process-step:last-child .process-step__center::before { bottom: calc(100% - 19px); }
+      /* Clip lines at first/last based on top margin (1.5rem = 24px) + circle center (19px) = 43px */
+      .process-step:first-child .process-step__center::before { top: 43px; }
+      .process-step:last-child .process-step__center::before { bottom: calc(100% - 43px); }
     }
   `]
 })
@@ -2040,6 +2041,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.slideInterval = setInterval(() => {
       this.nextSlide();
     }, 5000);
+  }
+
+  private touchStartX = 0;
+
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.changedTouches[0].clientX;
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    const touchEndX = event.changedTouches[0].clientX;
+    const diff = this.touchStartX - touchEndX;
+
+    // Swipe left (next slide)
+    if (diff > 50) {
+      this.nextSlide();
+      this.resetInterval();
+    }
+    // Swipe right (prev slide)
+    else if (diff < -50) {
+      this.prevSlide();
+      this.resetInterval();
+    }
   }
 
   resetInterval() {
