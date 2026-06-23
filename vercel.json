@@ -1,7 +1,7 @@
 {
-  "buildCommand": "",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist/vaarunya-global-exim/browser",
-  "framework": null,
+  "framework": "angular",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
