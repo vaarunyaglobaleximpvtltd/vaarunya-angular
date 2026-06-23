@@ -439,13 +439,20 @@ import { CountUpDirective } from '../../directives/count-up.directive';
                 <p>All fields marked * are required</p>
               </div>
 
+              @if (formError(); as err) {
+                <div class="form-error-alert" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.875rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; animation: fadeIn 0.3s ease-out;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; min-width: 16px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>{{ err }}</span>
+                </div>
+              }
+
               <form (ngSubmit)="onSubmit()">
                 <!-- Inquiry Type with Icons -->
                 <div class="form-group">
                   <label>Type of Inquiry *</label>
                   <div class="inquiry-chips">
                     @for (type of inquiryTypes(); track type) {
-                      <button type="button" class="inquiry-chip" [class.active]="formData.inquiryType === type" (click)="formData.inquiryType = type">
+                      <button type="button" class="inquiry-chip" [class.active]="formData.inquiryType === type" (click)="formData.inquiryType = type" [disabled]="formLoading()">
                         @switch (type) {
                           @case ('New Business Inquiry') {
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4M2 11h20"/></svg>
@@ -469,44 +476,51 @@ import { CountUpDirective } from '../../directives/count-up.directive';
                 <div class="form-row">
                   <div class="form-group">
                     <label>First Name *</label>
-                    <input type="text" [(ngModel)]="formData.firstName" name="firstName" required placeholder="John" />
+                    <input type="text" [(ngModel)]="formData.firstName" name="firstName" required placeholder="John" [disabled]="formLoading()" />
                   </div>
                   <div class="form-group">
                     <label>Last Name *</label>
-                    <input type="text" [(ngModel)]="formData.lastName" name="lastName" required placeholder="Doe" />
+                    <input type="text" [(ngModel)]="formData.lastName" name="lastName" required placeholder="Doe" [disabled]="formLoading()" />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
                     <label>Email Address *</label>
-                    <input type="email" [(ngModel)]="formData.email" name="email" required placeholder="john&#64;company.com" />
+                    <input type="email" [(ngModel)]="formData.email" name="email" required placeholder="john&#64;company.com" [disabled]="formLoading()" />
                   </div>
                   <div class="form-group">
                     <label>Phone Number *</label>
-                    <input type="tel" [(ngModel)]="formData.phone" name="phone" required placeholder="+1 (555) 000-0000" />
+                    <input type="tel" [(ngModel)]="formData.phone" name="phone" required placeholder="+1 (555) 000-0000" [disabled]="formLoading()" />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
                     <label>Company Name *</label>
-                    <input type="text" [(ngModel)]="formData.company" name="company" required placeholder="Your company" />
+                    <input type="text" [(ngModel)]="formData.company" name="company" required placeholder="Your company" [disabled]="formLoading()" />
                   </div>
                   <div class="form-group">
                     <label>Country *</label>
-                    <input type="text" [(ngModel)]="formData.country" name="country" required placeholder="Your country" />
+                    <input type="text" [(ngModel)]="formData.country" name="country" required placeholder="Your country" [disabled]="formLoading()" />
                   </div>
                 </div>
 
                 <div class="form-group">
                   <label>Message *</label>
-                  <textarea [(ngModel)]="formData.message" name="message" required rows="4" placeholder="Tell us about your requirements, products of interest, order volume..."></textarea>
+                  <textarea [(ngModel)]="formData.message" name="message" required rows="4" placeholder="Tell us about your requirements, products of interest, order volume..." [disabled]="formLoading()"></textarea>
                 </div>
 
-                <button type="submit" class="btn-submit" [disabled]="!isFormValid()">
-                  <span>Send Inquiry</span>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <button type="submit" class="btn-submit" [disabled]="formLoading() || !isFormValid()">
+                  <span>{{ formLoading() ? 'Sending...' : 'Send Inquiry' }}</span>
+                  @if (formLoading()) {
+                    <svg class="spin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:16px;height:16px;margin-left:8px;animation:spin-animation 1s linear infinite;display:inline-block;vertical-align:middle;">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" style="opacity:0.25" fill="none"></circle>
+                      <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  }
                 </button>
 
                 <p class="form-note">
@@ -1767,6 +1781,24 @@ import { CountUpDirective } from '../../directives/count-up.directive';
       .social-inner { padding: 2rem 1.5rem; }
       .social-link { width: 48px; height: 48px; }
     }
+
+    .btn-submit:disabled, .inquiry-chip:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+      background: #4a4a4a !important;
+      border-color: #4a4a4a !important;
+    }
+
+    @keyframes spin-animation {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   `]
 })
 export class ContactComponent implements OnInit, OnDestroy {
@@ -1777,6 +1809,8 @@ export class ContactComponent implements OnInit, OnDestroy {
   inquiryTypes = signal<string[]>([]);
   openFaq = signal<string | null>(null);
   formSubmitted = signal(false);
+  formLoading = signal(false);
+  formError = signal<string | null>(null);
   activeAudience = signal<string | null>(null);
 
   // Live clocks
@@ -1796,7 +1830,7 @@ export class ContactComponent implements OnInit, OnDestroy {
     message: ''
   };
 
-  formProgress = computed(() => {
+  formProgress() {
     const fields = [
       this.formData.inquiryType,
       this.formData.firstName,
@@ -1809,17 +1843,20 @@ export class ContactComponent implements OnInit, OnDestroy {
     ];
     const filled = fields.filter(f => f && f.trim().length > 0).length;
     return Math.round((filled / fields.length) * 100);
-  });
+  }
 
-  isFormValid = computed(() => {
+  isFormValid() {
     return !!(
       this.formData.inquiryType &&
       this.formData.firstName.trim() &&
       this.formData.lastName.trim() &&
       this.formData.email.trim() &&
+      this.formData.phone.trim() &&
+      this.formData.company.trim() &&
+      this.formData.country.trim() &&
       this.formData.message.trim()
     );
-  });
+  }
 
   constructor(private data: DataService, private seo: SeoService) {}
 
@@ -1879,7 +1916,32 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.formSubmitted.set(true);
+    if (!this.isFormValid()) return;
+    this.formLoading.set(true);
+    this.formError.set(null);
+
+    const payload = {
+      inquiry_type: this.formData.inquiryType,
+      first_name: this.formData.firstName,
+      last_name: this.formData.lastName,
+      email: this.formData.email,
+      phone: this.formData.phone,
+      company: this.formData.company,
+      country: this.formData.country,
+      message: this.formData.message
+    };
+
+    this.data.submitInquiry(payload).subscribe({
+      next: (res) => {
+        this.formSubmitted.set(true);
+        this.formLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Inquiry submission error:', err);
+        this.formError.set('Failed to submit inquiry. Please check your network and try again or reach out on WhatsApp.');
+        this.formLoading.set(false);
+      }
+    });
   }
 
   // FAQ step parsing
@@ -1915,5 +1977,7 @@ export class ContactComponent implements OnInit, OnDestroy {
       message: ''
     };
     this.formSubmitted.set(false);
+    this.formLoading.set(false);
+    this.formError.set(null);
   }
 }
