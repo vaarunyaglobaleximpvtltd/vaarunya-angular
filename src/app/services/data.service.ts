@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, shareReplay, forkJoin, map, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -153,5 +153,15 @@ export class DataService {
 
   getContactData(): Observable<any> {
     return this.getData('contact.json');
+  }
+
+  submitInquiry(formData: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'apikey': environment.supabaseAnonKey,
+      'Authorization': `Bearer ${environment.supabaseAnonKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    });
+    return this.http.post(`${environment.supabaseUrl}/rest/v1/inquiries`, formData, { headers });
   }
 }
