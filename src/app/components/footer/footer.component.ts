@@ -14,11 +14,8 @@ import { DataService } from '../../services/data.service';
           <div class="footer-grid">
             <div class="footer-brand">
               <div class="logo-area">
-                <img src="assets/images/logo.svg" alt="Vaarunya" class="footer-logo" />
-                <div>
-                  <h3>Vaarunya Global Exim Pvt Ltd</h3>
-                  <p class="tagline">A Promise of Trust and Quality</p>
-                </div>
+                <h3>Vaarunya Global Exim Pvt Ltd</h3>
+                <p class="tagline">A Promise of Trust and Quality</p>
               </div>
               <p class="desc">Building enduring partnerships through transparent global trade solutions. We connect verified suppliers with serious buyers worldwide.</p>
               <div class="trust-badges">
@@ -116,14 +113,7 @@ import { DataService } from '../../services/data.service';
 
     .footer-brand {
       .logo-area {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
         margin-bottom: 1rem;
-      }
-
-      .footer-logo {
-        height: 48px;
       }
 
       h3 {
